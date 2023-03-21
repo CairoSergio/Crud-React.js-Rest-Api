@@ -1,24 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import { toast} from "react-toastify";
+import Form from "./components/form";
+import Tabela from "./components/tabela";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 
 function App() {
+  const [users, setUsers] = useState([])
+  const [onEdit, setOnEdit] =  useState(null)
+
+  const getUsers = async ()=>{
+    try{
+      const res = await axios.get('http://localhost:8800');
+      setUsers(res.data)
+      setOnEdit(null)
+    }catch(error){
+      toast.error(error)
+    }
+  }
+
+  useEffect(()=>{
+    getUsers();
+  },[setUsers])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <main className='main-body'>
+        <h2 style={{fontSize:30}}>
+          Usuarios
+        </h2>
+        <Form getUsers={getUsers} Edit={onEdit} setedit={setOnEdit}/>
+        <Tabela users={users} Edit={setOnEdit} getUsers={getUsers}/>
+      </main>
+    </>
   );
 }
 
